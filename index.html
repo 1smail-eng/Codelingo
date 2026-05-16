@@ -17,9 +17,30 @@
             color: #fff;
             min-height: 100vh;
             display: flex;
+            overflow: hidden;
         }
 
-        /* GİRİŞ EKRANI (LOGIN PANEL) */
+        /* ÖZEL ÜSTTEN KAYAN BİLDİRİM */
+        #notification-container {
+            position: fixed;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #23353f;
+            border: 2px solid #58cc02;
+            color: #fff;
+            padding: 15px 30px;
+            border-radius: 15px;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            z-index: 10000;
+            transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* GİRİŞ EKRANI */
         #login-screen {
             position: fixed;
             top: 0;
@@ -49,9 +70,16 @@
             font-size: 32px;
         }
 
-        .login-box p {
-            color: #afbbca;
-            margin-bottom: 30px;
+        .login-input {
+            width: 100%;
+            padding: 12px;
+            background: #131f24;
+            border: 2px solid #37464f;
+            border-radius: 12px;
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 16px;
+            text-align: center;
         }
 
         .login-btn {
@@ -61,7 +89,6 @@
             gap: 10px;
             width: 100%;
             padding: 14px;
-            margin-bottom: 15px;
             border-radius: 12px;
             border: none;
             font-size: 16px;
@@ -72,8 +99,6 @@
 
         .google-btn { background-color: #fff; color: #000; }
         .google-btn:hover { background-color: #e6e6e6; }
-        .github-btn { background-color: #24292e; color: #fff; }
-        .github-btn:hover { background-color: #1c1f23; }
 
         /* ANA SİTE YAPISI */
         .sidebar {
@@ -133,12 +158,6 @@
             background-color: #131f24;
         }
 
-        .page-title {
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        /* SAĞ ÜST KAYDET/YÜKLE BUTONLARI */
         .action-buttons {
             display: none; 
             gap: 10px;
@@ -218,7 +237,7 @@
         }
         .option-btn:hover { background-color: #243740; }
 
-        /* PLUS KİLİT KUTUSU */
+        /* SANAL LABORATUVAR */
         .plus-lock-box {
             background: linear-gradient(135deg, #1c2d35, #131f24);
             border: 2px solid #1cb0f6;
@@ -227,6 +246,64 @@
             text-align: center;
             max-width: 600px;
             margin: 0 auto;
+        }
+
+        .lab-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .lab-panel {
+            background: #1c2d35;
+            border: 2px solid #37464f;
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 300px;
+        }
+
+        .component-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .comp-card {
+            background: #131f24;
+            border: 1px solid #37464f;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: bold;
+            font-size: 13px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .comp-card:hover {
+            transform: scale(1.05);
+            border-color: #1cb0f6;
+        }
+
+        .added-component {
+            background: #243740;
+            border-left: 4px solid #1cb0f6;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 5px;
+            text-align: left;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .remove-comp {
+            background: none;
+            border: none;
+            color: #ff4b4b;
+            cursor: pointer;
+            font-weight: bold;
         }
 
         /* AI CHAT ALANI */
@@ -243,13 +320,19 @@
 </head>
 <body>
 
+    <!-- SİTENİN KENDİ ÜST BİLDİRİM KUTUSU -->
+    <div id="notification-container">
+        <span id="notif-icon">🔔</span>
+        <span id="notif-text">Bildirim Mesajı</span>
+    </div>
+
     <!-- GİRİŞ EKRANI -->
     <div id="login-screen">
         <div class="login-box">
             <h1>CodeLingo</h1>
-            <p>Giriş Yaparak Geliştirmeye Başla</p>
-            <button class="login-btn google-btn" onclick="login('Google')">🌐 Google ile Giriş Yap</button>
-            <button class="login-btn github-btn" onclick="login('GitHub')">🐙 GitHub ile Giriş Yap</button>
+            <p style="margin-bottom:15px; color:#afbbca;">Giriş Yaparak Geliştirmeye Başla</p>
+            <input type="text" id="username-input" class="login-input" placeholder="Kullanıcı Adınızı Yazın..." autocomplete="off">
+            <button class="login-btn google-btn" onclick="login()">🚀 Platforma Giriş Yap</button>
         </div>
     </div>
 
@@ -267,7 +350,6 @@
         <div class="topbar">
             <div class="page-title" id="topbar-title">Kod Yazmayı Öğren</div>
             
-            <!-- Sanal Sistem Kaydet/Yükle Butonları -->
             <div class="action-buttons" id="sanal-sistem-actions">
                 <button class="action-btn save-btn" onclick="kaydet()">💾 Projeyi Kaydet</button>
                 <button class="action-btn load-btn" onclick="yukle()">🔄 Geri Yükle</button>
@@ -296,7 +378,7 @@
             <div id="page-hata-cozme" class="page">
                 <h2>AI Kod Koçu</h2>
                 <p style="color: #afbbca; margin-bottom: 20px;">Koda ne yapmak istediğini anlat ve çakışmayı anında çöz.</p>
-                <textarea id="ai-desc" placeholder="Ne yapmak istiyordun? Örn: Servo motoru 180 derece döndürmek istiyorum ama dönmüyor..." style="width:100%; height:70px; background:#1c2d35; color:#fff; border:2px solid #37464f; border-radius:10px; padding:10px; margin-bottom:10px; resize:none;"></textarea>
+                <textarea id="ai-desc" placeholder="Ne yapmak istiyordun? Örn: Servo motoru döndürmek istiyorum ama dönmüyor..." style="width:100%; height:70px; background:#1c2d35; color:#fff; border:2px solid #37464f; border-radius:10px; padding:10px; margin-bottom:10px; resize:none;"></textarea>
                 <textarea id="ai-code" placeholder="Kodlarını buraya yapıştır..." style="width:100%; height:140px; background:#1c2d35; color:#fff; border:2px solid #37464f; border-radius:10px; padding:10px; font-family:monospace; resize:none;"></textarea>
                 <button class="action-btn save-btn" style="width:100%; padding:12px;" onclick="aiCoz()">Çözümü ve Eksikleri Bul</button>
                 
@@ -309,15 +391,36 @@
                     <h2 style="color: #1cb0f6;">⚡ CodeLingo PLUS</h2>
                     <p style="margin-top: 10px; color: #afbbca;">Gerçek hayattaki tüm Arduino malzemeleri ve kablolar bu sanal simülatörde!</p>
                     <div style="font-size: 32px; color: #1cb0f6; font-weight: bold; margin: 15px 0;">Haftalık 100 TL</div>
-                    <p style="font-size:13px; color:#afbbca; margin-bottom:20px;">*İstediğin an iptal edilebilir. Ödeme 3 gün gecikirse sistem otomatik kilitlenir.</p>
                     <button class="action-btn save-btn" style="background-color:#1cb0f6; padding:12px 30px;" onclick="plusAc()">Aboneliği Başlat</button>
                 </div>
                 
-                <!-- Plus Açılınca Gelecek Laboratuvar Alanı -->
-                <div id="lab-screen" style="display:none; text-align:center; padding:30px; border:2px dashed #1cb0f6; border-radius:15px;">
-                    <h3 style="color:#1cb0f6; margin-bottom:15px;">🎛️ Sanal Devre Tahtası (Simülatör)</h3>
-                    <p style="color:#afbbca;">Mevcut Malzemeler: [Arduino Uno, Jumper Kablo, Servo Motor, Step Motor, OLED Ekran, Direnç]</p>
-                    <textarea id="sanal-arduino-kod" style="width:100%; height:120px; background:#131f24; color:#58cc02; border:1px solid #37464f; margin-top:15px; font-family:monospace; padding:10px;" placeholder="// Arduino kodun yarım kaldıysa sağ üstten kaydetmeyi unutma!"></textarea>
+                <!-- ARDUINO VE BİLEŞEN EKLEME ALANI -->
+                <div id="lab-screen" style="display:none;">
+                    <h3 style="color:#1cb0f6; text-align:center; margin-bottom:15px;">🎛️ Sanal Devre ve Kod Laboratuvarı</h3>
+                    
+                    <div class="lab-layout">
+                        <div class="lab-panel">
+                            <h4 style="color:#1cb0f6; margin-bottom:10px;">🛠️ Donanım Ekle</h4>
+                            <div class="component-grid">
+                                <div class="comp-card" onclick="parcaEkle('🔌 Arduino Uno R3')">➕ Arduino Uno</div>
+                                <div class="comp-card" onclick="parcaEkle('⚙️ Servo Motor')">➕ Servo Motor</div>
+                                <div class="comp-card" onclick="parcaEkle('🦿 Step Motor')">➕ Step Motor</div>
+                                <div class="comp-card" onclick="parcaEkle('📺 OLED Ekran')">➕ OLED Ekran</div>
+                                <div class="comp-card" onclick="parcaEkle('🚨 RFID Kart Sistemi')">➕ RFID Okuyucu</div>
+                                <div class="comp-card" onclick="parcaEkle('🔋 Lityum Batarya')">➕ Pil Yuvası</div>
+                            </div>
+                            
+                            <h4 style="color:#fff; margin-top:20px; margin-bottom:10px;">📱 Masadaki Parçaların:</h4>
+                            <div id="added-components-list">
+                                <p style="color:#afbbca; font-size:13px;" id="empty-lab-text">Henüz masaya bir şey koymadın. Yukarıdan parçalara tıkla!</p>
+                            </div>
+                        </div>
+
+                        <div class="lab-panel" style="display:flex; flex-direction:column;">
+                            <h4 style="color:#58cc02; margin-bottom:10px;">💻 Arduino Taslak Kodu</h4>
+                            <textarea id="sanal-arduino-kod" style="width:100%; flex:1; background:#131f24; color:#58cc02; border:1px solid #37464f; font-family:monospace; padding:10px; resize:none;" placeholder:// Eklediğin parçaların pin kalibrasyon kodlarını buraya yazabilirsin..."></textarea>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -325,7 +428,20 @@
     </div>
 
     <script>
-        // SORU HAVUZU VERİSİ (Çözüldükçe Yenisi Eklenen Dinamik Yapı)
+        // SİTENİN ÖZEL ÜSTTEN GELEN MESAJ SİSTEMİ
+        function siteMesajiGoster(text, icon = "🔔", borderColor = "#58cc02") {
+            const container = document.getElementById('notification-container');
+            document.getElementById('notif-icon').innerText = icon;
+            document.getElementById('notif-text').innerText = text;
+            container.style.borderColor = borderColor;
+            
+            container.style.top = "20px";
+            
+            setTimeout(() => {
+                container.style.top = "-100px";
+            }, 3000);
+        }
+
         const sorular = [
             { q: "C++ dilinde ekrana yazı yazdırmak için hangisi kullanılır?", c: "std::cout << 'Merhaba';\n", opt: ["std::cout << 'Merhaba';", "print('Merhaba');", "Console.WriteLine();"], ans: 0 },
             { q: "Roblox Lua dilinde bir parçanın (Part) rengini değiştirmek için hangisi yazılır?", c: "script.Parent.BrickColor = BrickColor.new('Red')\n", opt: ["Color.change('Red')", "script.Parent.BrickColor = BrickColor.new('Red')", "Part.Color = 'Red'"], ans: 1 },
@@ -335,11 +451,16 @@
         let mevcutSoruIndex = 0;
         let toplamSoruHedefi = 100;
 
-        function login(provider) {
-            let ad = prompt(provider + " Hesabınız için bir kullanıcı adı belirleyin:");
-            if(!ad) ad = "Geliştirici";
+        function login() {
+            let ad = document.getElementById('username-input').value.trim();
+            if(!ad) ad = "Genç Dahi";
             document.getElementById('login-screen').style.display = 'none';
             document.getElementById('user-info').innerText = "👤 " + ad;
+            
+            setTimeout(() => {
+                siteMesajiGoster(`Hoş geldin ${ad}! Geliştirici paneli başarıyla yüklendi.`, "🚀", "#58cc02");
+            }, 500);
+            
             soruYukle();
         }
 
@@ -359,22 +480,20 @@
             }
         }
 
-        // KOD ÖĞRENME SİSTEMİ MANTIĞI
         function soruYukle() {
             if(mevcutSoruIndex >= toplamSoruHedefi) {
                 document.getElementById('page-kod-ogren').innerHTML = "<h2>🎉 Harika! 100 Soruyu Başarıyla Tamamladın ve Seviye Atladın!</h2>";
                 return;
             }
             
-            // Eğer hazırladığımız ilk sorular biterse otomatik yeni soru üreten döngü (Sonsuz Havuz Simülasyonu)
             let s;
             if (mevcutSoruIndex < sorular.length) {
                 s = sorular[mevcutSoruIndex];
             } else {
                 s = {
-                    q: `İleri Düzey Seviye Sorusu - Soru ${mevcutSoruIndex + 1}: Mantıksal döngü hatasını bulun.`,
-                    c: `void loop() {\n  // Zorluk Seviyesi: ${mevcutSoruIndex * 3}\n  int sensor = analogRead(A0);\n}`,
-                    opt: ["Pin modunu düzeltmek", "Gecikme süresi (delay) eklemek", "Kütüphaneyi güncellemek"],
+                    q: `İleri Seviye Algoritma Sorusu - Soru ${mevcutSoruIndex + 1}: Kod döngüsündeki pin çakışması nasıl önlenir?`,
+                    c: `void loop() {\n  // Zorluk Seviyesi: ${mevcutSoruIndex * 2}\n  int veri = analogRead(A0);\n}`,
+                    opt: ["Sensör pini eklemek", "delay() ile bekletme eklemek", "Kütüphane çağırmak"],
                     ans: 1
                 };
             }
@@ -393,54 +512,98 @@
 
         function cevapKontrol(secilen, dogruCevap) {
             if(secilen === dogruCevap) {
-                alert("🟢 Doğru Cevap! Yeni soru havuzunuza ekleniyor ve zorluk artıyor...");
+                siteMesajiGoster("Tebrikler! Doğru cevap, sonraki soruya geçiliyor.", "🟢", "#58cc02");
                 mevcutSoruIndex++;
                 soruYukle();
             } else {
-                alert("🔴 Yanlış Cevap! Kod çakışmasını tekrar inceleyip dene.");
+                siteMesajiGoster("Yanlış cevap! Mantığı tekrar inceleyip dene.", "🔴", "#ff4b4b");
             }
         }
 
-        // AI HATA ÇÖZÜCÜ SİMÜLASYONU
+        // AKILLI YAPAY ZEKA KONTROL SİSTEMİ (YENİLENDİ!)
         function aiCoz() {
-            let desc = document.getElementById('ai-desc').value;
-            let code = document.getElementById('ai-code').value;
-            if(!desc || !code) { alert("Lütfen hem ne yapmak istediğinizi yazın hem de kodu yapıştırın!"); return; }
-            
+            let desc = document.getElementById('ai-desc').value.trim();
+            let code = document.getElementById('ai-code').value.trim();
             let box = document.getElementById('ai-box');
+            
+            // Eğer alanlar tamamen boşsa rezil olmasın, uyarsın!
+            if(!desc && !code) { 
+                siteMesajiGoster("Lütfen kutuları boş bırakmayın!", "⚠️", "#ff4b4b"); 
+                return; 
+            }
+            
             box.style.display = "block";
-            box.innerHTML = "✨ <b>CodeLingo AI kodu inceliyor, eklenmeyen satırları ve çakışma nedenlerini arıyor...</b>";
+            box.innerHTML = "✨ <b>CodeLingo AI kod yapısını ve girdiğiniz metni analiz ediyor...</b>";
             
             setTimeout(() => {
+                // Kod vermeyip sadece soru sorduysa ya da ikisi de çok kısaysa
+                if(code.length < 3) {
+                    box.innerHTML = `
+                        <h4 style="color:#ff4b4b; margin-bottom:8px;">🤖 AI Sistem Uyarısı:</h4>
+                        <p><b>Hata:</b> Analiz edilecek herhangi bir kod bulamadım! Lütfen çakışma yaşadığın Arduino veya Lua kodunu aşağıdaki kutuya yapıştır.</p>
+                        <p style="margin-top:10px; color:#afbbca;"><i>Girdiğin Açıklama: "${desc || 'Açıklama belirtilmedi'}"</i></p>
+                    `;
+                    siteMesajiGoster("AI kod algılayamadı!", "⚠️", "#ff4b4b");
+                    return;
+                }
+
+                // Kod verilmişse, içeriğe göre akıllıca filtrele
+                let lowerCode = code.toLowerCase();
+                let lowerDesc = desc.toLowerCase();
+                let rapor = "";
+
+                if(lowerCode.includes("servo") || lowerDesc.includes("servo")) {
+                    rapor = `<p><b>Bulunan Çakışma (Servo):</b> Kodunda Servo motor kütüphanesi çağrılmış ancak <code>myservo.attach(pin)</code> kurulumunda PWM desteklemeyen bir pin seçilmiş olabilir. Sinyal pini çakışıyor!</p>`;
+                } else if(lowerCode.includes("oled") || lowerCode.includes("display")) {
+                    rapor = `<p><b>Bulunan Çakışma (OLED):</b> Ekranın I2C haberleşme pinleri (SDA ve SCL), Arduino Uno üzerinde A4 ve A5 pinlerine bağlanmalıdır. Farklı pinlerde çakışma tespit edildi!</p>`;
+                } else if(lowerCode.includes("gamepass") || lowerCode.includes("script.parent")) {
+                    rapor = `<p><b>Bulunan Çakışma (Roblox Lua):</b> PlayerGui veya MarketplaceService tetikleyicisi asenkron çalışıyor. <code>WaitForChild()</code> kullanmadığın için veri yüklenmeden kod çakışıyor.</p>`;
+                } else {
+                    rapor = `<p><b>Bulunan Çakışma (Genel):</b> Yazdığın kod bloklarında süslü parantez kapatma hatası ya da değişkenlerin local/global tanımlarında çakışmalar mevcut.</p>`;
+                }
+
                 box.innerHTML = `
-                    <h4 style="color:#58cc02; margin-bottom:8px;">🤖 AI Çözüm Raporu:</h4>
-                    <p><b>Çakışma Nedeni:</b> Yapmak istediğin işlemle kodundaki tanımlamalar uyuşmuyor. Muhtemelen bir pini veya değişkeni eklemeyi unuttun ya da iki farklı komut aynı anda çakışıyor.</p>
-                    <p style="margin-top:10px; color:#afbbca;"><b>Çözüm:</b> Eksik olan satırlar kodunun en başına eklendi ve çakışan döngüler birbirinden ayrıldı. Bu haliyle test edebilirsin!</p>
+                    <h4 style="color:#58cc02; margin-bottom:8px;">🤖 AI Detaylı Çözüm Raporu:</h4>
+                    ${rapor}
+                    <p style="margin-top:10px; color:#afbbca;"><b>Çözüm Önerisi:</b> Kodun yapısını optimize etmek için tanımlamaları gözden geçir, çakışan fonksiyonları ayırdım.</p>
                 `;
-            }, 1500);
+                siteMesajiGoster("Yapay Zeka kod raporunu çıkardı!", "🤖", "#58cc02");
+            }, 1200);
         }
 
-        // PLUS VE TARAYICI HAFIZALI KAYDETME MANTIĞI
         function plusAc() {
-            alert("Haftalık 100 TL aboneliğiniz başlatıldı! Sanal Arduino Laboratuvarı aktif. İstediğiniz an iptal edebilirsiniz. 3 gün gecikme durumunda sistem kilitlenecektir.");
+            siteMesajiGoster("Abonelik onaylandı! Sanal donanım kütüphanesi açıldı.", "⚡", "#1cb0f6");
             document.getElementById('lock-screen').style.display = "none";
             document.getElementById('lab-screen').style.display = "block";
             document.getElementById('sanal-sistem-actions').style.display = 'flex';
         }
 
+        function parcaEkle(parcaAdi) {
+            const list = document.getElementById('added-components-list');
+            const emptyText = document.getElementById('empty-lab-text');
+            if(emptyText) emptyText.remove();
+
+            const div = document.createElement('div');
+            div.className = 'added-component';
+            div.innerHTML = `<span>${parcaAdi}</span> <button class="remove-comp" onclick="this.parentElement.remove(); siteMesajiGoster('Parça masadan kaldırıldı.', '🗑️', '#ff4b4b');">❌</button>`;
+            list.appendChild(div);
+
+            siteMesajiGoster(`${parcaAdi} laboratuvar masasına başarıyla eklendi!`, "🛠️", "#1cb0f6");
+        }
+
         function kaydet() {
             let kod = document.getElementById('sanal-arduino-kod').value;
             localStorage.setItem('codelingo_sanal_kayit', kod);
-            alert("💾 Sanal sistemdeki projeniz ve tüm kablo/malzeme dizilimleriniz başarıyla kaydedildi!");
+            siteMesajiGoster("Masa durumu ve taslak kodunuz tarayıcıya kaydedildi!", "💾", "#58cc02");
         }
 
         function yukle() {
             let eskiKod = localStorage.getItem('codelingo_sanal_kayit');
             if(eskiKod) {
                 document.getElementById('sanal-arduino-kod').value = eskiKod;
-                alert("🔄 Kaydedilen son projeniz ve malzemeleriniz başarıyla geri yüklendi!");
+                siteMesajiGoster("Kaydedilen projeniz başarıyla masaya geri yüklendi!", "🔄", "#58cc02");
             } else {
-                alert("Kayıtlı bir proje bulunamadı.");
+                siteMesajiGoster("Kayıtlı eski proje bulunamadı.", "⚠️", "#ff4b4b");
             }
         }
     </script>
