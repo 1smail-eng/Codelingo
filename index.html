@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeLingo — Geleceğin Kodlama Dünyası</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #131f24;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* GİRİŞ EKRANI (LOGIN PANEL) */
+        #login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #131f24;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-box {
+            background-color: #1c2d35;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            border: 2px solid #37464f;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-box h1 {
+            color: #58cc02;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .login-box p {
+            color: #afbbca;
+            margin-bottom: 30px;
+        }
+
+        .login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .google-btn { background-color: #fff; color: #000; }
+        .google-btn:hover { background-color: #e6e6e6; }
+        .github-btn { background-color: #24292e; color: #fff; }
+        .github-btn:hover { background-color: #1c1f23; }
+
+        /* ANA SİTE YAPISI */
+        .sidebar {
+            width: 260px;
+            background-color: #1c2d35;
+            border-right: 2px solid #37464f;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .sidebar .logo {
+            font-size: 26px;
+            font-weight: bold;
+            color: #58cc02;
+            margin-bottom: 40px;
+            padding-left: 10px;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            color: #afbbca;
+            padding: 15px;
+            text-align: left;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            transition: all 0.2s;
+        }
+
+        .menu-btn:hover, .menu-btn.active {
+            background-color: #37464f;
+            color: #fff;
+        }
+
+        .menu-btn.plus-btn {
+            color: #1cb0f6;
+            border: 1px solid rgba(28, 176, 246, 0.3);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            height: 70px;
+            border-bottom: 2px solid #37464f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+            background-color: #131f24;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        /* SAĞ ÜST KAYDET/YÜKLE BUTONLARI */
+        .action-buttons {
+            display: none; 
+            gap: 10px;
+        }
+
+        .action-btn {
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+        }
+        .save-btn { background-color: #58cc02; color: #fff; }
+        .load-btn { background-color: #37464f; color: #fff; border: 1px solid #afbbca; }
+
+        .content-body {
+            padding: 40px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* KOD ÖĞRENME ALANI */
+        .progress-container {
+            background-color: #37464f;
+            border-radius: 10px;
+            height: 20px;
+            width: 100%;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background-color: #58cc02;
+            height: 100%;
+            width: 1%;
+            transition: width 0.3s;
+        }
+
+        .question-box {
+            background-color: #1c2d35;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #37464f;
+            margin-bottom: 20px;
+        }
+
+        .code-snippet {
+            background-color: #131f24;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            margin: 15px 0;
+            color: #f8f8f2;
+            border-left: 4px solid #58cc02;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            background-color: #1c2d35;
+            border: 2px solid #37464f;
+            color: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: left;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .option-btn:hover { background-color: #243740; }
+
+        /* PLUS KİLİT KUTUSU */
+        .plus-lock-box {
+            background: linear-gradient(135deg, #1c2d35, #131f24);
+            border: 2px solid #1cb0f6;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* AI CHAT ALANI */
+        .ai-response {
+            background-color: #1c2d35;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #37464f;
+            margin-top: 20px;
+            display: none;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- GİRİŞ EKRANI -->
+    <div id="login-screen">
+        <div class="login-box">
+            <h1>CodeLingo</h1>
+            <p>Giriş Yaparak Geliştirmeye Başla</p>
+            <button class="login-btn google-btn" onclick="login('Google')">🌐 Google ile Giriş Yap</button>
+            <button class="login-btn github-btn" onclick="login('GitHub')">🐙 GitHub ile Giriş Yap</button>
+        </div>
+    </div>
+
+    <!-- SOL MENÜ -->
+    <div class="sidebar">
+        <div class="logo">CodeLingo</div>
+        <button class="menu-btn active" onclick="switchPage('kod-ogren', 'Kod Yazmayı Öğren', this)">💻 Kod Yazmayı Öğren</button>
+        <button class="menu-btn" onclick="switchPage('hata-cozme', 'Yapay Zeka Hata Çözücü', this)">🤖 Hata Çözme (AI)</button>
+        <button class="menu-btn plus-btn" onclick="switchPage('sanal-sistem', 'Sanal Sistem & Arduino Laboratuvarı', this)">⚡ Sanal Sistem (PLUS)</button>
+    </div>
+
+    <!-- SAĞ İÇERİK ALANI -->
+    <div class="main-content">
+        <!-- ÜST BAR -->
+        <div class="topbar">
+            <div class="page-title" id="topbar-title">Kod Yazmayı Öğren</div>
+            
+            <!-- Sanal Sistem Kaydet/Yükle Butonları -->
+            <div class="action-buttons" id="sanal-sistem-actions">
+                <button class="action-btn save-btn" onclick="kaydet()">💾 Projeyi Kaydet</button>
+                <button class="action-btn load-btn" onclick="yukle()">🔄 Geri Yükle</button>
+            </div>
+            
+            <div id="user-info" style="font-weight: bold; color: #58cc02;">Giriş Yapılmadı</div>
+        </div>
+
+        <!-- SAYFA İÇERİKLERİ -->
+        <div class="content-body">
+            
+            <!-- 1. KOD ÖĞRENME SAYFASI -->
+            <div id="page-kod-ogren" class="page active">
+                <h3 id="question-number">Soru: 1 / 100</h3>
+                <div class="progress-container"><div class="progress-bar" id="p-bar"></div></div>
+                
+                <div class="question-box">
+                    <h2 id="question-text">Yükleniyor...</h2>
+                    <div class="code-snippet" id="code-box"></div>
+                </div>
+
+                <div class="options-container" id="options-box"></div>
+            </div>
+
+            <!-- 2. HATA ÇÖZME SAYFASI -->
+            <div id="page-hata-cozme" class="page">
+                <h2>AI Kod Koçu</h2>
+                <p style="color: #afbbca; margin-bottom: 20px;">Koda ne yapmak istediğini anlat ve çakışmayı anında çöz.</p>
+                <textarea id="ai-desc" placeholder="Ne yapmak istiyordun? Örn: Servo motoru 180 derece döndürmek istiyorum ama dönmüyor..." style="width:100%; height:70px; background:#1c2d35; color:#fff; border:2px solid #37464f; border-radius:10px; padding:10px; margin-bottom:10px; resize:none;"></textarea>
+                <textarea id="ai-code" placeholder="Kodlarını buraya yapıştır..." style="width:100%; height:140px; background:#1c2d35; color:#fff; border:2px solid #37464f; border-radius:10px; padding:10px; font-family:monospace; resize:none;"></textarea>
+                <button class="action-btn save-btn" style="width:100%; padding:12px;" onclick="aiCoz()">Çözümü ve Eksikleri Bul</button>
+                
+                <div class="ai-response" id="ai-box"></div>
+            </div>
+
+            <!-- 3. SANAL SİSTEM (PLUS) SAYFASI -->
+            <div id="page-sanal-sistem" class="page">
+                <div class="plus-lock-box" id="lock-screen">
+                    <h2 style="color: #1cb0f6;">⚡ CodeLingo PLUS</h2>
+                    <p style="margin-top: 10px; color: #afbbca;">Gerçek hayattaki tüm Arduino malzemeleri ve kablolar bu sanal simülatörde!</p>
+                    <div style="font-size: 32px; color: #1cb0f6; font-weight: bold; margin: 15px 0;">Haftalık 100 TL</div>
+                    <p style="font-size:13px; color:#afbbca; margin-bottom:20px;">*İstediğin an iptal edilebilir. Ödeme 3 gün gecikirse sistem otomatik kilitlenir.</p>
+                    <button class="action-btn save-btn" style="background-color:#1cb0f6; padding:12px 30px;" onclick="plusAc()">Aboneliği Başlat</button>
+                </div>
+                
+                <!-- Plus Açılınca Gelecek Laboratuvar Alanı -->
+                <div id="lab-screen" style="display:none; text-align:center; padding:30px; border:2px dashed #1cb0f6; border-radius:15px;">
+                    <h3 style="color:#1cb0f6; margin-bottom:15px;">🎛️ Sanal Devre Tahtası (Simülatör)</h3>
+                    <p style="color:#afbbca;">Mevcut Malzemeler: [Arduino Uno, Jumper Kablo, Servo Motor, Step Motor, OLED Ekran, Direnç]</p>
+                    <textarea id="sanal-arduino-kod" style="width:100%; height:120px; background:#131f24; color:#58cc02; border:1px solid #37464f; margin-top:15px; font-family:monospace; padding:10px;" placeholder="// Arduino kodun yarım kaldıysa sağ üstten kaydetmeyi unutma!"></textarea>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // SORU HAVUZU VERİSİ (Çözüldükçe Yenisi Eklenen Dinamik Yapı)
+        const sorular = [
+            { q: "C++ dilinde ekrana yazı yazdırmak için hangisi kullanılır?", c: "std::cout << 'Merhaba';\n", opt: ["std::cout << 'Merhaba';", "print('Merhaba');", "Console.WriteLine();"], ans: 0 },
+            { q: "Roblox Lua dilinde bir parçanın (Part) rengini değiştirmek için hangisi yazılır?", c: "script.Parent.BrickColor = BrickColor.new('Red')\n", opt: ["Color.change('Red')", "script.Parent.BrickColor = BrickColor.new('Red')", "Part.Color = 'Red'"], ans: 1 },
+            { q: "Arduino'da servo motoru çalıştırmak için öncelikle hangi kütüphaneyi ekleriz?", c: "#include <Servo.h>\n", opt: ["#include <Motor.h>", "#include <Stepper.h>", "#include <Servo.h>"], ans: 2 }
+        ];
+
+        let mevcutSoruIndex = 0;
+        let toplamSoruHedefi = 100;
+
+        function login(provider) {
+            let ad = prompt(provider + " Hesabınız için bir kullanıcı adı belirleyin:");
+            if(!ad) ad = "Geliştirici";
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('user-info').innerText = "👤 " + ad;
+            soruYukle();
+        }
+
+        function switchPage(pageId, pageTitle, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById('page-' + pageId).classList.add('active');
+            document.getElementById('topbar-title').innerText = pageTitle;
+            btn.classList.add('active');
+
+            const actionButtons = document.getElementById('sanal-sistem-actions');
+            if(pageId === 'sanal-sistem' && document.getElementById('lab-screen').style.display === 'block') {
+                actionButtons.style.display = 'flex';
+            } else {
+                actionButtons.style.display = 'none';
+            }
+        }
+
+        // KOD ÖĞRENME SİSTEMİ MANTIĞI
+        function soruYukle() {
+            if(mevcutSoruIndex >= toplamSoruHedefi) {
+                document.getElementById('page-kod-ogren').innerHTML = "<h2>🎉 Harika! 100 Soruyu Başarıyla Tamamladın ve Seviye Atladın!</h2>";
+                return;
+            }
+            
+            // Eğer hazırladığımız ilk sorular biterse otomatik yeni soru üreten döngü (Sonsuz Havuz Simülasyonu)
+            let s;
+            if (mevcutSoruIndex < sorular.length) {
+                s = sorular[mevcutSoruIndex];
+            } else {
+                s = {
+                    q: `İleri Düzey Seviye Sorusu - Soru ${mevcutSoruIndex + 1}: Mantıksal döngü hatasını bulun.`,
+                    c: `void loop() {\n  // Zorluk Seviyesi: ${mevcutSoruIndex * 3}\n  int sensor = analogRead(A0);\n}`,
+                    opt: ["Pin modunu düzeltmek", "Gecikme süresi (delay) eklemek", "Kütüphaneyi güncellemek"],
+                    ans: 1
+                };
+            }
+
+            document.getElementById('question-number').innerText = `Soru: ${mevcutSoruIndex + 1} / ${toplamSoruHedefi}`;
+            document.getElementById('p-bar').style.width = (mevcutSoruIndex + 1) + "%";
+            document.getElementById('question-text').innerText = s.q;
+            document.getElementById('code-box').innerText = s.c;
+            
+            let optsHtml = "";
+            s.opt.forEach((o, index) => {
+                optsHtml += `<button class="option-btn" onclick="cevapKontrol(${index}, ${s.ans})">${o}</button>`;
+            });
+            document.getElementById('options-box').innerHTML = optsHtml;
+        }
+
+        function cevapKontrol(secilen, dogruCevap) {
+            if(secilen === dogruCevap) {
+                alert("🟢 Doğru Cevap! Yeni soru havuzunuza ekleniyor ve zorluk artıyor...");
+                mevcutSoruIndex++;
+                soruYukle();
+            } else {
+                alert("🔴 Yanlış Cevap! Kod çakışmasını tekrar inceleyip dene.");
+            }
+        }
+
+        // AI HATA ÇÖZÜCÜ SİMÜLASYONU
+        function aiCoz() {
+            let desc = document.getElementById('ai-desc').value;
+            let code = document.getElementById('ai-code').value;
+            if(!desc || !code) { alert("Lütfen hem ne yapmak istediğinizi yazın hem de kodu yapıştırın!"); return; }
+            
+            let box = document.getElementById('ai-box');
+            box.style.display = "block";
+            box.innerHTML = "✨ <b>CodeLingo AI kodu inceliyor, eklenmeyen satırları ve çakışma nedenlerini arıyor...</b>";
+            
+            setTimeout(() => {
+                box.innerHTML = `
+                    <h4 style="color:#58cc02; margin-bottom:8px;">🤖 AI Çözüm Raporu:</h4>
+                    <p><b>Çakışma Nedeni:</b> Yapmak istediğin işlemle kodundaki tanımlamalar uyuşmuyor. Muhtemelen bir pini veya değişkeni eklemeyi unuttun ya da iki farklı komut aynı anda çakışıyor.</p>
+                    <p style="margin-top:10px; color:#afbbca;"><b>Çözüm:</b> Eksik olan satırlar kodunun en başına eklendi ve çakışan döngüler birbirinden ayrıldı. Bu haliyle test edebilirsin!</p>
+                `;
+            }, 1500);
+        }
+
+        // PLUS VE TARAYICI HAFIZALI KAYDETME MANTIĞI
+        function plusAc() {
+            alert("Haftalık 100 TL aboneliğiniz başlatıldı! Sanal Arduino Laboratuvarı aktif. İstediğiniz an iptal edebilirsiniz. 3 gün gecikme durumunda sistem kilitlenecektir.");
+            document.getElementById('lock-screen').style.display = "none";
+            document.getElementById('lab-screen').style.display = "block";
+            document.getElementById('sanal-sistem-actions').style.display = 'flex';
+        }
+
+        function kaydet() {
+            let kod = document.getElementById('sanal-arduino-kod').value;
+            localStorage.setItem('codelingo_sanal_kayit', kod);
+            alert("💾 Sanal sistemdeki projeniz ve tüm kablo/malzeme dizilimleriniz başarıyla kaydedildi!");
+        }
+
+        function yukle() {
+            let eskiKod = localStorage.getItem('codelingo_sanal_kayit');
+            if(eskiKod) {
+                document.getElementById('sanal-arduino-kod').value = eskiKod;
+                alert("🔄 Kaydedilen son projeniz ve malzemeleriniz başarıyla geri yüklendi!");
+            } else {
+                alert("Kayıtlı bir proje bulunamadı.");
+            }
+        }
+    </script>
+</body>
+</html>
